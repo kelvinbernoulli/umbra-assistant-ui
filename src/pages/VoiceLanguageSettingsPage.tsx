@@ -21,7 +21,7 @@ export default function VoiceLanguageSettingsPage() {
       <section className="settings-section">
         <SectionHeading eyebrow="Voice input" title="Talk naturally to Umbra" />
         <div className="setting-row">
-          <div><strong>Voice commands</strong><span>Use your microphone to search, navigate, and create reminders.</span></div>
+          <div><strong>Voice commands</strong><span>Use your microphone to search, navigate, and send commands to the server.</span></div>
           <Toggle active={settings.voiceCommands} onClick={() => updateSettings({ voiceCommands: !settings.voiceCommands })} label="Voice commands" />
         </div>
         <div className="setting-row">

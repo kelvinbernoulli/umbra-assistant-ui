@@ -1,16 +1,15 @@
 import { ArrowRight, Check, Moon, ShieldCheck, Sun } from 'lucide-react'
 import { Link } from 'react-router-dom'
 import { SectionHeading } from '../components/SectionHeading'
-import { Toggle } from '../components/Toggle'
-import { useSettings } from '../hooks/useSettings'
 import { useUmbra } from '../hooks/useUmbra'
+import AccountSettings from '../components/AccountSettings'
 
 export default function SettingsPage() {
   const { theme, setTheme } = useUmbra()
-  const { settings, updateSettings } = useSettings()
 
   return (
     <>
+      <AccountSettings />
       <section className="settings-section">
         <SectionHeading eyebrow="Appearance" title="Choose your atmosphere" />
         <div className="theme-options" role="radiogroup" aria-label="Color theme">
@@ -28,22 +27,10 @@ export default function SettingsPage() {
       </section>
 
       <section className="settings-section">
-        <SectionHeading eyebrow="Daily rhythm" title="Brief & suggestions" />
-        <div className="setting-row">
-          <div><strong>Morning brief</strong><span>Prepare a focused summary every morning at 7:30.</span></div>
-          <Toggle active={settings.morningBrief} onClick={() => updateSettings({ morningBrief: !settings.morningBrief })} label="Morning brief" />
-        </div>
-        <div className="setting-row">
-          <div><strong>Proactive suggestions</strong><span>Surface useful actions when Umbra finds a clear connection.</span></div>
-          <Toggle active={settings.proactiveSuggestions} onClick={() => updateSettings({ proactiveSuggestions: !settings.proactiveSuggestions })} label="Proactive suggestions" />
-        </div>
-      </section>
-
-      <section className="settings-section">
         <SectionHeading eyebrow="Workspace role" title="Administration" />
         <Link className="admin-entry-card" to="/admin">
           <span><ShieldCheck size={18} /></span>
-          <div><strong>Open admin dashboard</strong><small>Manage aggregate analytics, users, sources, and system health.</small></div>
+          <div><strong>Open admin dashboard</strong><small>View server health and registered source types.</small></div>
           <ArrowRight size={16} />
         </Link>
       </section>

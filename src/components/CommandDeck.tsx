@@ -7,18 +7,17 @@ import {
   ChevronRight,
   Clock3,
   LockKeyhole,
-  MessageCircle,
   Mic,
   Search,
   Square,
   X,
 } from 'lucide-react'
-import type { ParsedCommand, VoiceMode } from '../context/UmbraContext'
+import type { VoiceMode } from '../context/UmbraContext'
 import { useDialogFocusTrap } from '../hooks/useDialogFocusTrap'
 import { useSettings } from '../hooks/useSettings'
-import { useUmbra } from '../hooks/useUmbra'
+import { useCommands } from '../hooks/useCommands'
 
-type VoiceStage = 'idle' | 'listening' | 'processing' | 'confirm' | 'result' | 'unsupported' | 'disabled' | 'error'
+type VoiceStage = 'idle' | 'listening' | 'processing' | 'result' | 'unsupported' | 'disabled' | 'error' | 'request-error'
 
 type SpeechResultListLike = {
   length: number
@@ -53,7 +52,7 @@ declare global {
 
 function CommandDeck({ open, initialMode, onClose }: { open: boolean; initialMode: VoiceMode; onClose: () => void }) {
   const navigate = useNavigate()
-  const { addReminder } = useUmbra()
+  const { submitCommand, error: commandError, reset: resetCommand } = useCommands()
   const { settings } = useSettings()
   const inputRef = useRef<HTMLInputElement>(null)
   const recognitionRef = useRef<SpeechRecognitionLike | null>(null)
@@ -63,7 +62,7 @@ function CommandDeck({ open, initialMode, onClose }: { open: boolean; initialMod
   const timerRef = useRef<number | null>(null)
   const [input, setInput] = useState('')
   const [stage, setStage] = useState<VoiceStage>('idle')
-  const [parsed, setParsed] = useState<ParsedCommand | null>(null)
+  const requestSessionRef = useRef(0)
   const [resultCopy, setResultCopy] = useState('')
 
   const clearTimer = () => {
@@ -72,13 +71,15 @@ function CommandDeck({ open, initialMode, onClose }: { open: boolean; initialMod
   }
 
   const closeDeck = useCallback(() => {
+    requestSessionRef.current += 1
+    resetCommand()
     recognitionSessionRef.current += 1
     suppressRecognitionEndRef.current = true
     recognitionRef.current?.abort()
     recognitionRef.current = null
     clearTimer()
     onClose()
-  }, [onClose])
+  }, [onClose, resetCommand])
 
   const dialogRef = useDialogFocusTrap<HTMLElement>({
     active: open,
@@ -89,47 +90,37 @@ function CommandDeck({ open, initialMode, onClose }: { open: boolean; initialMod
     const value = rawValue.trim()
     if (!value) return
     voiceResultRef.current = fromVoice
-    if (recognitionRef.current) {
-      recognitionSessionRef.current += 1
-      suppressRecognitionEndRef.current = true
-      recognitionRef.current.stop()
-      recognitionRef.current = null
-    }
+    recognitionSessionRef.current += 1
+    suppressRecognitionEndRef.current = true
+    recognitionRef.current?.abort()
+    recognitionRef.current = null
     setInput(value)
-    setStage('processing')
-    setParsed(null)
     setResultCopy('')
     clearTimer()
-    timerRef.current = window.setTimeout(() => {
-      const lowered = value.toLowerCase()
-      if (lowered.includes('remind') || lowered.includes('call dave')) {
-        setParsed({
-          title: 'Call Dave',
-          description: lowered.includes('leave') ? 'When you leave your current location' : 'Today at 6:00 PM',
-          meta: 'Umbra will ask for location access only when this reminder is active.',
-        })
-        setStage('confirm')
-        return
-      }
-      if (lowered.includes('summarize') && lowered.includes('whatsapp')) {
-        setResultCopy('You received 34 WhatsApp messages this week. Two need replies: Dave’s dinner plan and Ada’s question about Sunday lunch.')
-        setStage('result')
-        return
-      }
-      if (lowered.includes('calendar') || lowered.includes('schedule') || lowered.includes('agenda') || /what(?:'s| is) on today/.test(lowered)) {
-        navigate('/calendar')
-        closeDeck()
-        return
-      }
-      const cleaned = value.replace(/^search(?::| for)?\s*/i, '').replace(/^find\s*/i, '')
-      navigate(`/search?q=${encodeURIComponent(cleaned || value)}`)
+    if (/^(search|find)\b/i.test(value)) {
+      const query = value.replace(/^(search(?::| for)?|find)\s*/i, '')
+      navigate(`/search?q=${encodeURIComponent(query || value)}`)
       closeDeck()
-    }, 720)
-  }, [closeDeck, navigate])
-
+      return
+    }
+    if (/^(show|open)( me)?( my| the)? (calendar|schedule|agenda)$/i.test(value)) {
+      navigate('/calendar')
+      closeDeck()
+      return
+    }
+    const session = ++requestSessionRef.current
+    setStage('processing')
+    void submitCommand(value).then((result) => {
+      if (session !== requestSessionRef.current) return
+      if (result) {
+        setResultCopy(result.message)
+        setStage(result.success ? 'result' : 'request-error')
+      } else setStage('request-error')
+    })
+  }, [closeDeck, navigate, submitCommand])
   const startListening = useCallback(() => {
     clearTimer()
-    setParsed(null)
+
     setResultCopy('')
     if (!settings.voiceCommands) {
       setStage('disabled')
@@ -223,21 +214,11 @@ function CommandDeck({ open, initialMode, onClose }: { open: boolean; initialMod
     processCommand(input)
   }
 
-  const confirmReminder = () => {
-    if (parsed) addReminder(parsed)
-    setStage('processing')
-    timerRef.current = window.setTimeout(() => {
-      setResultCopy('Done — I’ll remind you to call Dave when you leave.')
-      setStage('result')
-    }, 520)
-  }
-
   if (!open) return null
 
   const quickActions = [
-    { icon: Clock3, label: 'Remind me to call Dave when I leave' },
-    { icon: Search, label: 'Everything about the Q3 report' },
-    { icon: MessageCircle, label: 'Summarize this week’s WhatsApp messages' },
+    { icon: Clock3, label: 'Show my calendar' },
+    { icon: Search, label: 'Search for meeting' },
   ]
 
   return (
@@ -273,7 +254,7 @@ function CommandDeck({ open, initialMode, onClose }: { open: boolean; initialMod
             type="button"
             className={`voice-button${stage === 'listening' ? ' voice-button--active' : ''}`}
             onClick={stage === 'listening' ? () => recognitionRef.current?.stop() : startListening}
-            disabled={stage === 'processing' || stage === 'confirm'}
+            disabled={stage === 'processing'}
             aria-label={stage === 'listening' ? 'Stop listening' : 'Start voice command'}
           >
             {stage === 'listening' ? <Square size={14} fill="currentColor" /> : <Mic size={18} />}
@@ -298,30 +279,15 @@ function CommandDeck({ open, initialMode, onClose }: { open: boolean; initialMod
         {stage === 'processing' && (
           <div className="processing-state" aria-live="polite">
             <span className="processing-orb" />
-            <div><strong>Making sense of that…</strong><span>Finding the right context and action.</span></div>
+            <div><strong>Sending command…</strong><span>Waiting for the server response.</span></div>
           </div>
         )}
 
-        {stage === 'confirm' && parsed && (
-          <div className="intent-card" aria-live="polite">
-            <div className="intent-card__icon"><Clock3 size={18} /></div>
-            <div className="intent-card__body">
-              <span className="eyebrow">Ready to create</span>
-              <strong>{parsed.title}</strong>
-              <p>{parsed.description}</p>
-              <small><LockKeyhole size={11} /> {parsed.meta}</small>
-            </div>
-            <div className="intent-card__actions">
-              <button className="button button--ghost" onClick={() => setStage('idle')}>Cancel</button>
-              <button className="button button--gold" onClick={confirmReminder}><Check size={15} /> Confirm</button>
-            </div>
-          </div>
-        )}
-
+        {stage === 'request-error' && <div className="command-alert" role="alert"><AlertCircle size={17} /><div><strong>Command could not be completed</strong><span>{commandError || resultCopy || 'Please try again.'}</span></div></div>}
         {stage === 'result' && (
           <div className="result-card" aria-live="polite">
             <span className="result-card__check"><Check size={17} /></span>
-            <div><strong>Done</strong><p>{resultCopy}</p></div>
+            <div><strong>Server response</strong><p>{resultCopy}</p></div>
           </div>
         )}
 

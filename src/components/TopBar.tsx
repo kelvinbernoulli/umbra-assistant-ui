@@ -1,4 +1,4 @@
-import { Bell, Command, LockKeyhole, Mic, Moon, Search, Sun } from 'lucide-react'
+import { Command, LockKeyhole, Mic, Moon, Search, Sun } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import type { VoiceMode } from '../context/UmbraContext'
 import { useSettings } from '../hooks/useSettings'
@@ -35,11 +35,7 @@ export default function TopBar({ onOpen }: TopBarProps) {
         <button className="icon-button mic-trigger" onClick={() => onOpen('voice')} disabled={!settings.voiceCommands} aria-label={settings.voiceCommands ? 'Start a voice command' : 'Voice commands are disabled'}>
           <Mic size={17} />
         </button>
-        <Link to="/settings/notifications" className="icon-button notification-button" aria-label="Notification settings">
-          <Bell size={17} />
-          {settings.importantMessages && <span className="notification-dot" />}
-        </Link>
-        <Link to="/settings" className="topbar__avatar" aria-label="Open settings">KA</Link>
+        <Link to="/settings" className="topbar__avatar" aria-label="Open settings">U</Link>
       </div>
     </header>
   )

@@ -40,7 +40,7 @@ export default function Sidebar() {
         >
           <Settings size={19} strokeWidth={1.7} />
         </NavLink>
-        <div className="user-avatar" title="Kelvin Adeyemi">KA</div>
+        <div className="user-avatar" title="Umbra workspace">U</div>
       </div>
     </aside>
   )

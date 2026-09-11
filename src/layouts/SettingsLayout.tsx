@@ -1,4 +1,4 @@
-import { Bell, Mic, ShieldCheck, User, type LucideIcon } from 'lucide-react'
+import { Mic, ShieldCheck, User, type LucideIcon } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 const settingsNavigation: Array<{
@@ -9,7 +9,6 @@ const settingsNavigation: Array<{
 }> = [
   { to: '/settings', label: 'Preferences', icon: User, end: true },
   { to: '/settings/voice-language', label: 'Voice & language', icon: Mic },
-  { to: '/settings/notifications', label: 'Notifications', icon: Bell },
   { to: '/settings/privacy-data', label: 'Privacy & data', icon: ShieldCheck },
 ]
 
@@ -38,6 +37,7 @@ export default function SettingsLayout() {
         </aside>
 
         <div className="settings-content">
+          <p className="page-intro__copy">Preferences are saved on this device. Server preference sync is not available yet.</p>
           <Outlet />
         </div>
       </div>

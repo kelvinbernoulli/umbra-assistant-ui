@@ -7,21 +7,27 @@ import TopBar from '../components/TopBar'
 import { SettingsContext } from '../context/SettingsContext'
 import {
   UmbraContext,
-  type CreatedReminder,
-  type ParsedCommand,
   type VoiceMode,
 } from '../context/UmbraContext'
-import { initialConnections } from '../data'
+import type { SessionResponse } from '../types/api'
+import { useSession } from '../hooks/useSession'
+import SignIn from '../components/SignIn'
 import { useCommandShortcut } from '../hooks/useCommandShortcut'
 import { useSettingsState } from '../hooks/useSettingsState'
 import { useTheme } from '../hooks/useTheme'
 
 export default function AppShell() {
+  const { session, loading, error, restore, signIn, logout } = useSession()
+  if (loading) return <main className="empty-state" role="status">Restoring your session…</main>
+  if (error) return <main className="empty-state" role="alert"><p>{error}</p><button className="button button--outline" onClick={() => void restore()}>Try again</button></main>
+  if (!session) return <SignIn signIn={signIn} />
+  return <SignedInShell key={session.user.id + session.workspace.id} session={session} logout={logout} />
+}
+
+function SignedInShell({ session, logout }: { session: SessionResponse; logout: () => Promise<void> }) {
   const [commandOpen, setCommandOpen] = useState(false)
   const [commandMode, setCommandMode] = useState<VoiceMode>('type')
   const [commandSession, setCommandSession] = useState(0)
-  const [connections, setConnections] = useState(initialConnections)
-  const [reminders, setReminders] = useState<CreatedReminder[]>([])
   const { theme, setTheme, toggleTheme } = useTheme()
   const settingsState = useSettingsState()
   const location = useLocation()
@@ -35,10 +41,6 @@ export default function AppShell() {
 
   const closeCommand = useCallback(() => setCommandOpen(false), [])
 
-  const addReminder = useCallback((reminder: ParsedCommand) => {
-    setReminders((current) => [{ ...reminder, id: `voice-${Date.now()}` }, ...current])
-  }, [])
-
   useCommandShortcut(openCommand)
 
   useEffect(() => {
@@ -47,7 +49,7 @@ export default function AppShell() {
 
   return (
     <SettingsContext.Provider value={settingsState}>
-      <UmbraContext.Provider value={{ openCommand, theme, setTheme, toggleTheme, connections, setConnections, reminders, addReminder }}>
+      <UmbraContext.Provider value={{ openCommand, theme, setTheme, toggleTheme, auth: session, logout }}>
         <div className="app-shell">
           <Sidebar />
           <div className="app-column">

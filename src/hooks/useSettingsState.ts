@@ -9,7 +9,12 @@ function getInitialSettings(): UmbraSettings {
   try {
     const savedSettings = window.localStorage.getItem(settingsStorageKey)
     if (savedSettings) {
-      return { ...defaultSettings, ...JSON.parse(savedSettings) as Partial<UmbraSettings> }
+      const parsed: unknown = JSON.parse(savedSettings)
+      if (!parsed || typeof parsed !== 'object') return defaultSettings
+      const saved = parsed as Record<string, unknown>
+      return Object.fromEntries(Object.entries(defaultSettings).map(([key, fallback]) =>
+        [key, typeof saved[key] === typeof fallback ? saved[key] : fallback],
+      )) as UmbraSettings
     }
   } catch {
     // Fall back to defaults when storage is unavailable or contains invalid JSON.
