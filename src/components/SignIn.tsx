@@ -11,6 +11,7 @@ export default function SignIn({ signIn }: { signIn: (credential: string) => Pro
   const [pending, setPending] = useState(false)
   const [attempt, setAttempt] = useState(0)
   useEffect(() => {
+    console.log('Google client', googleClientId)
     if (!googleClientId) return
     let active = true
     const controller = new AbortController()
