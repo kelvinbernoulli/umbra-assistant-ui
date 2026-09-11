@@ -31,7 +31,7 @@ export default function SignIn({ signIn }: { signIn: (credential: string) => Pro
   return <section className="settings-section account-sign-in">
     <p className="eyebrow">Your account</p><h2>Welcome to your workspace</h2>
     <p>Sign in with Google. Your first sign-in creates your account and personal workspace automatically.</p>
-    {!googleClientId ? <p role="alert">Google sign-in is not configured. Set VITE_GOOGLE_CLIENT_ID and restart the frontend.</p>
+    {!googleClientId ? <p role="alert">Google sign-in is not configured. Set GOOGLE_CLIENT_ID and restart the frontend.</p>
       : scriptError ? <p role="alert">Google sign-in could not load. Check your connection and reload this page.</p>
         : nonce && !pending ? <GoogleLogin key={nonce} nonce={nonce} onSuccess={({ credential }) => void complete(credential)} onError={() => setError('Google sign-in failed. Please try again.')} useOneTap={false} />
           : !error && <p role="status">{pending ? 'Signing in…' : 'Preparing Google sign-in…'}</p>}
