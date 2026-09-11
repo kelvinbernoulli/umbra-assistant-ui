@@ -1,3 +1,3 @@
 export default function AdminUsersPage() {
-  return <section className="admin-panel"><h2>Users</h2><div className="empty-state"><strong>User management is not available yet.</strong><span>The server does not currently provide a user list or account management.</span></div></section>
-}
+    return <><div className="admin-page-heading"><div><p className="eyebrow">Access management</p><h2>Users</h2><p>User management is not available yet.</p></div></div><div className="admin-table-wrap" tabIndex={0} aria-label="Users table"><table className="admin-table"><caption className="sr-only">Users</caption><thead><tr><th scope="col">User</th><th scope="col">Status</th><th scope="col">Role</th><th scope="col">Sources</th><th scope="col">Indexed</th><th scope="col">Last active</th><th scope="col">Action</th></tr></thead><tbody><tr><td colSpan={7}><div className="empty-state"><strong>User management is not available yet.</strong><span>Available records will appear here.</span></div></td></tr></tbody></table></div></>
+  }

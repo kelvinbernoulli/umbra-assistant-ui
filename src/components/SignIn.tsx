@@ -28,8 +28,8 @@ export default function SignIn({ signIn }: { signIn: (credential: string) => Pro
     catch (cause) { setError(getApiErrorMessage(cause)); setNonce('') }
     finally { setPending(false) }
   }
-  return <main className="page auth-page"><section className="connection-card">
-    <p className="eyebrow">Umbra</p><h1>Welcome to your workspace</h1>
+  return <section className="settings-section account-sign-in">
+    <p className="eyebrow">Your account</p><h2>Welcome to your workspace</h2>
     <p>Sign in with Google. Your first sign-in creates your account and personal workspace automatically.</p>
     {!googleClientId ? <p role="alert">Google sign-in is not configured. Set VITE_GOOGLE_CLIENT_ID and restart the frontend.</p>
       : scriptError ? <p role="alert">Google sign-in could not load. Check your connection and reload this page.</p>
@@ -37,5 +37,5 @@ export default function SignIn({ signIn }: { signIn: (credential: string) => Pro
           : !error && <p role="status">{pending ? 'Signing in…' : 'Preparing Google sign-in…'}</p>}
     {error && <div role="alert"><p>{error}</p><button className="button button--outline" disabled={pending} onClick={() => { setError(null); setNonce(''); setAttempt(value => value + 1) }}>Try again</button></div>}
     <p className="page-intro__copy">You can connect Google Calendar after signing in.</p>
-  </section></main>
+  </section>
 }

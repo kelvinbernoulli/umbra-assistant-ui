@@ -1,4 +1,4 @@
-import { Command, LockKeyhole, Mic, Moon, Search, Sun } from 'lucide-react'
+import { Bell, Command, LockKeyhole, Mic, Moon, Search, Sun } from 'lucide-react'
 import { Link, useLocation } from 'react-router-dom'
 import type { VoiceMode } from '../context/UmbraContext'
 import { useSettings } from '../hooks/useSettings'
@@ -12,7 +12,7 @@ type TopBarProps = {
 
 export default function TopBar({ onOpen }: TopBarProps) {
   const location = useLocation()
-  const { theme, toggleTheme } = useUmbra()
+  const { theme, toggleTheme, auth } = useUmbra()
   const { settings } = useSettings()
   const title = pageTitles[location.pathname] ?? 'Umbra'
 
@@ -35,7 +35,9 @@ export default function TopBar({ onOpen }: TopBarProps) {
         <button className="icon-button mic-trigger" onClick={() => onOpen('voice')} disabled={!settings.voiceCommands} aria-label={settings.voiceCommands ? 'Start a voice command' : 'Voice commands are disabled'}>
           <Mic size={17} />
         </button>
-        <Link to="/settings" className="topbar__avatar" aria-label="Open settings">U</Link>
+        <Link to="/notifications" className="icon-button notification-button" aria-label="Notifications"><Bell size={17} /></Link>
+        {auth ? <Link to="/settings" className="topbar__avatar" aria-label="Open settings">{auth.user.name.trim().split(/\s+/).map(part => part[0]).slice(0, 2).join('')}</Link>
+          : <Link to="/signin" state={{ from: location.pathname + location.search }} className="button button--gold topbar-sign-in">Sign in</Link>}
       </div>
     </header>
   )

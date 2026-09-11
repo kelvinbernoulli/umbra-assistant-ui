@@ -10,6 +10,8 @@ import NotificationsSettingsPage from './pages/NotificationsSettingsPage'
 import PrivacyDataSettingsPage from './pages/PrivacyDataSettingsPage'
 import SearchPage from './pages/SearchPage'
 import SettingsPage from './pages/SettingsPage'
+import SignInPage from './pages/SignInPage'
+import NotificationsPage from './pages/NotificationsPage'
 import TimelinePage from './pages/TimelinePage'
 import VoiceLanguageSettingsPage from './pages/VoiceLanguageSettingsPage'
 import AdminActivityPage from './pages/admin/AdminActivityPage'
@@ -24,6 +26,8 @@ export default function App() {
       <Routes>
         <Route element={<AppShell />}>
           <Route index element={<BriefPage />} />
+          <Route path="signin" element={<SignInPage />} />
+          <Route path="notifications" element={<NotificationsPage />} />
           <Route path="timeline" element={<TimelinePage />} />
           <Route path="search" element={<SearchPage />} />
           <Route path="calendar" element={<CalendarPage />} />

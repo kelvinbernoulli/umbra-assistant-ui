@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import { SectionHeading } from '../components/SectionHeading'
 import { useUmbra } from '../hooks/useUmbra'
 import AccountSettings from '../components/AccountSettings'
+import UnavailableSetting from '../components/UnavailableSetting'
 
 export default function SettingsPage() {
   const { theme, setTheme } = useUmbra()
@@ -26,6 +27,11 @@ export default function SettingsPage() {
         </div>
       </section>
 
+      <section className="settings-section">
+        <SectionHeading eyebrow="Daily rhythm" title="Brief & suggestions" />
+        <UnavailableSetting title="Morning brief" />
+        <UnavailableSetting title="Proactive suggestions" />
+      </section>
       <section className="settings-section">
         <SectionHeading eyebrow="Workspace role" title="Administration" />
         <Link className="admin-entry-card" to="/admin">

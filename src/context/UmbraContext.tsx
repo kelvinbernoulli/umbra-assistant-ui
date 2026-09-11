@@ -10,7 +10,11 @@ export type UmbraContextValue = {
   theme: Theme
   setTheme: (theme: Theme) => void
   toggleTheme: () => void
-  auth: SessionResponse
+  auth: SessionResponse | null
+  sessionLoading: boolean
+  sessionError: string | null
+  retrySession: () => Promise<void>
+  signIn: (credential: string) => Promise<void>
   logout: () => Promise<void>
 }
 

@@ -1,4 +1,6 @@
 import {
+  Activity,
+  Users,
   ChartNoAxesCombined,
   DatabaseZap,
   HeartPulse,
@@ -13,6 +15,8 @@ const adminNavigation: Array<{
   end?: boolean
 }> = [
   { to: '/admin', label: 'Overview', icon: ChartNoAxesCombined, end: true },
+  { to: '/admin/users', label: 'Users', icon: Users },
+  { to: '/admin/activity', label: 'Activity', icon: Activity },
   { to: '/admin/sources', label: 'Sources', icon: DatabaseZap },
   { to: '/admin/health', label: 'System health', icon: HeartPulse },
 ]

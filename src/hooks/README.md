@@ -1,6 +1,6 @@
 # Server hooks and authentication
 
-Open the app and select **Sign in with Google**. First sign-in provisions the
+Use **Sign in** in the top bar to open /signin. The bell opens /notifications; notification preferences remain under Settings. First sign-in provisions the
 Google user, personal workspace, owner membership, and a hashed API key in the
 Umbra database. Subsequent sign-ins find the account by Google's stable subject
 ID, never by an unverified browser user ID or by matching email addresses.
@@ -31,12 +31,12 @@ provider. Cross-site API URLs are not supported by the SameSite=Lax cookie setup
 
 ## Session lifecycle
 
-useSession restores GET /auth/session before any signed-in page mounts.
+useSession restores GET /auth/session in the background. The original app shell and dashboard remain visible before sign-in; protected data loads only after authentication.
 POST /auth/challenge creates a five-minute, one-use Google login nonce.
 POST /auth/google verifies the credential and establishes the session.
 POST /auth/logout revokes the database session and clears cookies.
 Session lifetime uses ACCESS_TOKEN_EXPIRE_MINUTES (24 hours by default).
-Protected requests returning 401 remove the signed-in UI and its data. Logout
+Protected requests returning 401 clear private data while keeping navigation visible. Logout
 and account changes also clear other open tabs using BroadcastChannel.
 Settings displays the account and Sign out; no manual credentials are required.
 

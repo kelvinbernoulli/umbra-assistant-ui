@@ -9,6 +9,8 @@ process.env.TMP = browserTempDir
 
 export default defineConfig({
   testDir: './tests',
+  outputDir: './test-results/artifacts',
+  globalTimeout: 240000,
   timeout: 60000,
   expect: { timeout: 15000 },
   workers: 1,

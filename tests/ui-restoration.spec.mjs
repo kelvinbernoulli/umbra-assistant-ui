@@ -1,0 +1,38 @@
+import { expect, test } from '@playwright/test'
+
+test('the original dashboard and navigation remain visible before sign-in', async ({ page }) => {
+  await page.route('https://accounts.google.com/gsi/client*', route => route.abort())
+  await page.route(/https:\/\/fonts\.(googleapis|gstatic)\.com\//, route => route.abort())
+  await page.route('**/api/v1/auth/session', route => route.fulfill({ status: 401, json: { detail: 'Sign in' } }))
+  const privateRequests = []
+  await page.route('**/api/v1/timeline*', route => { privateRequests.push(route.request().url()); return route.abort() })
+  await page.goto('/', { waitUntil: 'domcontentloaded' })
+  await expect(page.getByRole('complementary', { name: 'Primary navigation' })).toBeVisible()
+  await expect(page.locator('.brief-card__lead')).toBeVisible()
+  await expect(page.locator('.brief-card__facts')).toBeVisible()
+  await expect(page.locator('.brief-layout .priority-list')).toBeVisible()
+  await expect(page.locator('.brief-aside .agenda-card')).toBeVisible()
+  await expect(page.locator('.waiting-card')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Talk to Umbra' })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Welcome to your workspace' })).toHaveCount(0)
+  await page.screenshot({ path: 'test-results/restored-dashboard-desktop.png', fullPage: true })
+  await page.setViewportSize({ width: 390, height: 844 })
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  await page.screenshot({ path: 'test-results/restored-dashboard-mobile.png', fullPage: true })
+  expect(privateRequests).toHaveLength(0)
+})
+
+test('timeline uses the original rows and opens the detail drawer', async ({ page }) => {
+  await page.route('https://accounts.google.com/gsi/client*', route => route.abort())
+  await page.route(/https:\/\/fonts\.(googleapis|gstatic)\.com\//, route => route.abort())
+  await page.route('**/api/v1/auth/session', route => route.fulfill({ json: { user: { id: 'user', name: 'Test User', email: 'test@example.com' }, workspace: { id: 'workspace' } } }))
+  await page.route('**/api/v1/timeline*', route => route.fulfill({ json: [{ id: 'record', source: 'gmail', type: 'email', title: 'Saved message', detail: 'Message detail from the API.', timestamp: '2026-09-10T09:00:00Z' }] }))
+  await page.goto('/timeline', { waitUntil: 'domcontentloaded' })
+  await expect(page.locator('.timeline-item')).toHaveCount(1)
+  await page.locator('.timeline-item').click()
+  await expect(page.getByRole('dialog', { name: 'Saved message details' })).toBeVisible()
+  await expect(page.locator('.detail-sheet__content')).toContainText('Message detail from the API.')
+  await page.screenshot({ path: 'test-results/restored-timeline-drawer.png' })
+  await page.getByRole('button', { name: 'Close details' }).click()
+  await expect(page.getByRole('dialog')).toHaveCount(0)
+})

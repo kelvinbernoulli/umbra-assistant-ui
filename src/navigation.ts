@@ -10,6 +10,8 @@ export const navItems: Array<{ to: string; label: string; icon: LucideIcon; end?
 
 export const pageTitles: Record<string, string> = {
   '/': 'Morning brief',
+  '/signin': 'Sign in',
+  '/notifications': 'Notifications',
   '/timeline': 'Timeline',
   '/search': 'Search memory',
   '/calendar': 'Calendar',

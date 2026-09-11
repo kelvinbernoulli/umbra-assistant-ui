@@ -1,3 +1,3 @@
 export default function AdminActivityPage() {
-  return <section className="admin-panel"><h2>Activity</h2><div className="empty-state"><strong>Activity history is not available yet.</strong><span>The server does not currently provide an activity feed.</span></div></section>
-}
+    return <><div className="admin-page-heading"><div><p className="eyebrow">Audit trail</p><h2>Activity</h2><p>The audit activity feed is not available yet.</p></div></div><div className="admin-table-wrap" tabIndex={0} aria-label="Activity table"><table className="admin-table"><caption className="sr-only">Activity</caption><thead><tr><th scope="col">Actor</th><th scope="col">Action</th><th scope="col">Target</th><th scope="col">Category</th><th scope="col">Time</th></tr></thead><tbody><tr><td colSpan={5}><div className="empty-state"><strong>The audit activity feed is not available yet.</strong><span>Available records will appear here.</span></div></td></tr></tbody></table></div></>
+  }

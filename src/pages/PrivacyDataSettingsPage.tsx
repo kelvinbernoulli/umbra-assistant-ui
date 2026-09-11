@@ -2,6 +2,7 @@ import { CheckCircle2, ChevronRight, Download, Trash2 } from 'lucide-react'
 import { useState } from 'react'
 import { SectionHeading } from '../components/SectionHeading'
 import { useSettings } from '../hooks/useSettings'
+import UnavailableSetting from '../components/UnavailableSetting'
 
 export default function PrivacyDataSettingsPage() {
   const { settings, resetSettings } = useSettings()
@@ -43,6 +44,17 @@ export default function PrivacyDataSettingsPage() {
 
   return (
     <>
+      <section className="settings-section">
+        <SectionHeading eyebrow="Memory controls" title="Decide what Umbra can connect" />
+        <UnavailableSetting title="Semantic memory search" />
+        <UnavailableSetting title="Cross-source suggestions" />
+        <UnavailableSetting title="Location-triggered reminders" />
+        <label className="setting-row"><div><strong>Memory retention</strong><span>Retention preferences are not available yet.</span></div><select className="setting-control" disabled aria-label="Memory retention"><option>Unavailable</option></select></label>
+      </section>
+      <section className="settings-section">
+        <SectionHeading eyebrow="AI privacy" title="Diagnostics preferences" />
+        <UnavailableSetting title="Share de-identified diagnostics" />
+      </section>
       <section className="settings-section">
         <SectionHeading eyebrow="Your information" title="Export or remove local data" />
         <div className="data-actions">

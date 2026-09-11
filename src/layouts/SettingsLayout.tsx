@@ -1,4 +1,4 @@
-import { Mic, ShieldCheck, User, type LucideIcon } from 'lucide-react'
+import { Bell, Mic, ShieldCheck, User, type LucideIcon } from 'lucide-react'
 import { NavLink, Outlet } from 'react-router-dom'
 
 const settingsNavigation: Array<{
@@ -9,6 +9,7 @@ const settingsNavigation: Array<{
 }> = [
   { to: '/settings', label: 'Preferences', icon: User, end: true },
   { to: '/settings/voice-language', label: 'Voice & language', icon: Mic },
+  { to: '/settings/notifications', label: 'Notifications', icon: Bell },
   { to: '/settings/privacy-data', label: 'Privacy & data', icon: ShieldCheck },
 ]
 

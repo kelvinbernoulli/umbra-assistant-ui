@@ -3,6 +3,8 @@ import { expect, test } from '@playwright/test'
 const account = { user: { id: 'user-one', name: 'Test User', email: 'user@example.com' }, workspace: { id: 'workspace-one' } }
 
 test.beforeEach(async ({ page }) => {
+  await page.route('**/api/v1/timeline*', route => route.fulfill({ json: [] }))
+  await page.route('**/api/v1/connections', route => route.fulfill({ json: [] }))
   await page.route('**/api/v1/auth/session', route => route.fulfill({ json: account }))
   await page.route('**/api/v1/auth/challenge', route => route.fulfill({ json: { nonce: 'test-nonce' } }))
   await page.route(/https:\/\/fonts\.(googleapis|gstatic)\.com\//, (route) => route.abort())
@@ -81,12 +83,12 @@ test('brief shows loading, reports failure, and retries using the server respons
     await route.fulfill({ status: fail ? 503 : 200, json: fail ? { detail: 'Brief temporarily unavailable' } : { title: 'Brief from the API', summary: 'A unique server summary.' } })
   })
   await page.goto('/', { waitUntil: 'domcontentloaded' })
-  await expect(page.getByRole('status')).toHaveText('Loading from Umbra…')
+  await expect(page.getByRole('status')).toHaveText('Preparing your daily overview…')
   release()
   await expect(page.getByRole('alert')).toContainText('Brief temporarily unavailable')
   fail = false
-  await page.getByRole('button', { name: 'Try again' }).click()
-  await expect(page.getByRole('heading', { name: 'Brief from the API' })).toBeVisible()
+  await page.getByRole('button', { name: 'Try again', exact: true }).click()
+  await expect(page.getByText('Brief from the API', { exact: true })).toBeVisible()
   await expect(page.getByText('A unique server summary.')).toBeVisible()
   await expect(page.getByText('Dave asked about dinner')).toHaveCount(0)
 })
@@ -106,7 +108,7 @@ test('session restoration supplies access and expiry removes private content', a
   await expect(page.getByText('Private workspace record')).toBeVisible()
   expired = true
   await page.getByRole('button', { name: /Refresh/ }).click()
-  await expect(page.getByRole('heading', { name: 'Welcome to your workspace' })).toBeVisible()
+  await expect(page.getByText('Your workspace is waiting', { exact: true })).toBeVisible()
   await expect(page.getByText('Private workspace record')).toHaveCount(0)
   expect(await page.evaluate(() => JSON.stringify(localStorage))).not.toContain('workspace-one')
 })
@@ -156,6 +158,7 @@ test('disconnect requires confirmation, reports errors, and refreshes after succ
 })
 
 test('calendar uses saved event records and does not invent scheduled times', async ({ page }) => {
+  await page.clock.setFixedTime(new Date('2026-09-10T12:00:00Z'))
   await page.route('**/api/v1/timeline*', (route) => route.fulfill({ json: [
     { id: 'event', source: 'gcal', type: 'event', title: 'Calendar API item', detail: 'Event payload', timestamp: '2026-09-10T09:00:00Z' },
     { id: 'message', source: 'gmail', type: 'message', title: 'Excluded message', detail: 'Message payload', timestamp: '2026-09-10T09:00:00Z' },
@@ -172,7 +175,7 @@ test('calendar uses saved event records and does not invent scheduled times', as
 })
 
 test('health and commands display server values without fabricated success', async ({ page }) => {
-  await page.route('http://localhost:4173/health', (route) => route.fulfill({ json: { status: 'ok', app: 'Test Umbra server', env: 'test', using_mock_vectorstore: true, using_mock_embeddings: false } }))
+  await page.route(/^http:\/\/localhost:\d+\/health$/, (route) => route.fulfill({ json: { status: 'ok', app: 'Test Umbra server', env: 'test', using_mock_vectorstore: true, using_mock_embeddings: false } }))
   await page.route('**/api/v1/commands', (route) => route.fulfill({ json: { success: true, message: 'Command received, no reminder created.' } }))
   await page.goto('/admin/health', { waitUntil: 'domcontentloaded' })
   await expect(page.getByText('Test Umbra server')).toBeVisible()

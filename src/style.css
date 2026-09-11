@@ -1001,3 +1001,23 @@ body,
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
 }
+.brief-refresh { margin-top: 12px; }
+.dashboard-footnote { margin-top: 14px; }
+.timeline-toolbar { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
+.timeline-toolbar .filter-row { flex: 1; }
+.timeline-toolbar > .button { flex-shrink: 0; }
+.record-detail-text { white-space: pre-wrap; overflow-wrap: anywhere; }
+.connection-card .google-connection > .button { width: 100%; }
+.connection-cancel { display: block; margin: 10px auto 0; }
+.connection-card__stats strong { overflow-wrap: anywhere; }
+.account-sign-in > p { margin-block: 12px; }
+.account-sign-in > h2 { margin-top: 5px; }
+.topbar-sign-in { white-space: nowrap; }
+.priority-card__content p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+@media (max-width: 620px) {
+  .timeline-toolbar { flex-wrap: wrap; margin-bottom: 18px; }
+  .timeline-toolbar .filter-row { min-width: 100%; margin-bottom: 0; }
+  .topbar-sign-in { padding-inline: 10px; font-size: 11px; }
+  .sync-overview { flex-wrap: wrap; }
+  .sync-overview > .button { margin-left: auto; }
+}
