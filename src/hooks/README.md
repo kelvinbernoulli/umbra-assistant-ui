@@ -14,12 +14,12 @@ Existing API keys remain supported for external clients.
 
 ## Local setup
 
-- Backend: matching GOOGLE_CLIENT_ID; Google Calendar additionally needs
+- Backend: matching VITE_GOOGLE_CLIENT_ID; Google Calendar additionally needs
   GOOGLE_CLIENT_SECRET and a valid, stable Fernet CREDENTIAL_ENCRYPTION_KEY.
 - Run backend database migrations with python -m alembic upgrade head.
 - For local HTTP development set SESSION_COOKIE_SECURE=false in the backend .env.
   Keep SESSION_COOKIE_SECURE=true for HTTPS deployments (the default).
-- Frontend: GOOGLE_CLIENT_ID is the public Google OAuth client ID.
+- Frontend: VITE_GOOGLE_CLIENT_ID is the public Google OAuth client ID.
   VITE_API_BASE_URL=/api/v1 uses the Vite proxy to http://127.0.0.1:8000.
 - Register http://localhost:5173 in the Google client's authorized JavaScript
   origins, and open the app at that origin. Restart Vite after changing .env.
