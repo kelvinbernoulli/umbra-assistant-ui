@@ -3,7 +3,12 @@ import axios from 'axios'
 // VITE_API_BASE_URL includes the API prefix (the server defaults to /api/v1).
 export const backendBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/+$/, '')
   || '/api/v1'
-export const apiReq = axios.create({ baseURL: backendBaseUrl, timeout: 30_000, withCredentials: true, headers: { 'X-Requested-With': 'XmlHttpRequest' } })
+export const apiReq = axios.create({
+  baseURL: backendBaseUrl,
+  timeout: 30_000,
+  withCredentials: true,
+  headers: { 'X-Requested-With': 'XMLHttpRequest' } 
+})
 
 export function getApiErrorMessage(error: unknown): string {
   if (axios.isAxiosError(error)) {
