@@ -1,8 +1,9 @@
 import axios from 'axios'
 
-// VITE_API_BASE_URL includes the API prefix (the server defaults to /api/v1).
-export const backendBaseUrl = import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/+$/, '')
-  || '/api/v1'
+// Production uses Vercel's same-origin proxy so browser session cookies work.
+// Local development can override the API URL, including the /api/v1 prefix.
+export const backendBaseUrl = import.meta.env.PROD ? '/api/v1'
+  : import.meta.env.VITE_API_BASE_URL?.trim().replace(/\/+$/, '') || '/api/v1'
 export const apiReq = axios.create({
   baseURL: backendBaseUrl,
   timeout: 30_000,

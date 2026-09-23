@@ -12,7 +12,9 @@ After deploying and checking the public URLs, use:
 - Privacy: `https://umbra-assistant-ui.vercel.app/privacy`
 - Terms: `https://umbra-assistant-ui.vercel.app/terms`
 
-These routes do not configure the backend proxy. Production API routing must be configured separately for the deployed backend.
+Production API requests use `/api/v1` on the frontend origin. `vercel.json` forwards `/api/*` and `/health` to `https://umbra-assistant.onrender.com`, before the SPA fallback. API responses must not be cached. Production builds intentionally ignore `VITE_API_BASE_URL` so an old localhost or cross-site URL cannot bypass the cookie-compatible proxy; the variable remains available for local development.
+
+Redeploy the frontend after changing this configuration. On Render, include `https://umbra-assistant-ui.vercel.app` in `FRONTEND_ORIGINS` and set `SESSION_COOKIE_SECURE=true`. Preview domains need their own explicit allowed origins if sign-in is required there. Keep the Google OAuth authorized JavaScript origins in sync with the frontend domains used for sign-in.
 
 References:
 
