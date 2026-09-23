@@ -165,6 +165,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .brand-mark__orb::after, .mini-orb::after { position: absolute; inset: 3px; content: ''; border-radius: inherit; box-shadow: inset 2px 1px 3px rgba(255,255,255,.08); }
 .brand-mark__name { font-family: var(--font-serif); font-size: 22px; }
+.brand-mark__logo { display: block; width: 32px; height: 32px; flex: 0 0 auto; }
 .brand-mark--compact .brand-mark__orb { width: 32px; height: 32px; }
 .user-avatar, .topbar__avatar { display: grid; width: 32px; height: 32px; place-items: center; color: var(--paper-soft); font: 10px var(--font-mono); letter-spacing: .03em; border: 1px solid var(--border-strong); border-radius: 50%; background: linear-gradient(145deg,#303544,#1b1e27); }
 

@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512" fill="none">
+  <title>Umbra eclipse logo</title>
+  <defs>
+    <linearGradient id="corona" x1="136" y1="112" x2="366" y2="396" gradientUnits="userSpaceOnUse"><stop stop-color="#FADE9F"/><stop offset=".48" stop-color="#E8B65C"/><stop offset="1" stop-color="#A36A22"/></linearGradient>
+    <radialGradient id="shadow" cx="0" cy="0" r="1" gradientTransform="translate(195 169) rotate(48) scale(259)" gradientUnits="userSpaceOnUse"><stop stop-color="#252A35"/><stop offset="1" stop-color="#12141A"/></radialGradient>
+  </defs>
+  <rect width="512" height="512" rx="112" fill="#12141A"/>
+  <circle cx="256" cy="256" r="162" stroke="#E8B65C" stroke-opacity=".18" stroke-width="2"/>
+  <circle cx="256" cy="256" r="145" fill="url(#corona)"/>
+  <circle cx="237" cy="234" r="132" fill="url(#shadow)"/>
+  <path d="M136 278a132 132 0 0 1 140-174" stroke="#FADE9F" stroke-opacity=".22" stroke-width="2" stroke-linecap="round"/>
+</svg>
