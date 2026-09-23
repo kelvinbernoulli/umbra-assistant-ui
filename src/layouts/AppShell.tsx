@@ -4,6 +4,7 @@ import CommandDeck from '../components/CommandDeck'
 import MobileNav from '../components/MobileNav'
 import Sidebar from '../components/Sidebar'
 import TopBar from '../components/TopBar'
+import LegalLinks from '../components/LegalLinks'
 import { SettingsContext } from '../context/SettingsContext'
 import {
   UmbraContext,
@@ -55,6 +56,7 @@ function AppFrame({ sessionState }: { sessionState: ReturnType<typeof useSession
             <TopBar onOpen={openCommand} />
             <main className="app-main" ref={mainRef}>
               <Outlet key={session ? `${session.user.id}:${session.workspace.id}` : 'signed-out'} />
+              <footer className="app-legal-footer"><LegalLinks /></footer>
             </main>
           </div>
           <MobileNav />

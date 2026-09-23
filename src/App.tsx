@@ -1,6 +1,7 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import AdminLayout from './layouts/AdminLayout'
 import AppShell from './layouts/AppShell'
+import LegalPage from './pages/LegalPage'
 import SettingsLayout from './layouts/SettingsLayout'
 import BriefPage from './pages/BriefPage'
 import CalendarPage from './pages/CalendarPage'
@@ -24,6 +25,8 @@ export default function App() {
   return (
     <BrowserRouter>
       <Routes>
+        <Route path="privacy" element={<LegalPage kind="privacy" />} />
+        <Route path="terms" element={<LegalPage kind="terms" />} />
         <Route element={<AppShell />}>
           <Route index element={<BriefPage />} />
           <Route path="signin" element={<SignInPage />} />

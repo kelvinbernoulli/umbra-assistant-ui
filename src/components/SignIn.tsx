@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react'
 import { GoogleLogin } from '@react-oauth/google'
+import LoadingIndicator from './LoadingIndicator'
 import { GoogleAuthStatusContext } from '../context/GoogleAuthStatusContext'
 import { googleClientId } from '../constansts/googleAuth'
 import { apiReq, getApiErrorMessage } from '../constansts/requests'
@@ -35,7 +36,7 @@ export default function SignIn({ signIn }: { signIn: (credential: string) => Pro
     {!googleClientId ? <p role="alert">Google sign-in is not configured. Set VITE_GOOGLE_CLIENT_ID and restart the frontend.</p>
       : scriptError ? <p role="alert">Google sign-in could not load. Check your connection and reload this page.</p>
         : nonce && !pending ? <GoogleLogin key={nonce} nonce={nonce} onSuccess={({ credential }) => void complete(credential)} onError={() => setError('Google sign-in failed. Please try again.')} useOneTap={false} />
-          : !error && <p role="status">{pending ? 'Signing in…' : 'Preparing Google sign-in…'}</p>}
+          : !error && <LoadingIndicator className="auth-loading" label={pending ? 'Signing you in…' : 'Preparing Google sign-in…'} />}
     {error && <div role="alert"><p>{error}</p><button className="button button--outline" disabled={pending} onClick={() => { setError(null); setNonce(''); setAttempt(value => value + 1) }}>Try again</button></div>}
     <p className="page-intro__copy">You can connect Google Calendar after signing in.</p>
   </section>

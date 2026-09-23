@@ -1,4 +1,5 @@
 import { googleClientId } from '../constansts/googleAuth'
+import LoadingIndicator from './LoadingIndicator'
 import { useGoogleCalendar } from '../hooks/useGoogleCalendar'
 
 type ConnectCalendarProps = {
@@ -14,10 +15,10 @@ export default function ConnectCalendar(props: ConnectCalendarProps) {
 function GoogleCalendarButton({ onConnected, disabled = false }: ConnectCalendarProps) {
   const { connect, isLoading, isReady, error } = useGoogleCalendar(onConnected)
   return <div className="google-connection">
-    <button className="button button--gold" onClick={connect} disabled={disabled || !isReady || isLoading}>
-      {isLoading ? 'Connecting Google Calendar…' : 'Connect Google Calendar'}
+    <button className="button button--gold" onClick={connect} disabled={disabled || !isReady || isLoading} aria-busy={isLoading}>
+      {isLoading ? <LoadingIndicator label="Connecting Google Calendar…" /> : 'Connect Google Calendar'}
     </button>
-    {!isReady && !error && <p role="status">Loading Google sign-in…</p>}
+    {!isReady && !error && <LoadingIndicator className="auth-loading" label="Loading Google sign-in…" />}
     {error && <p role="alert">{error}</p>}
   </div>
 }
